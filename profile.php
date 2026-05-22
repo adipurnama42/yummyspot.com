@@ -56,13 +56,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $isOwn) {
   $name  = trim($_POST['fullname'] ?? $profile['fullname']);
   $bio   = trim($_POST['bio'] ?? '');
   $avUrl = $profile['profile_picture'];
-  if (!empty($_FILES['avatar']['name'])) {
+
+  // Upload avatar baru jika ada
+  if (!empty($_FILES['avatar']['name']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
     $nv = uploadImage($_FILES['avatar'], 'avatars');
-    if ($nv) $avUrl = $nv;
+    if ($nv) {
+      $avUrl = $nv;
+    } else {
+      flash('error', 'Gagal upload foto. Pastikan format JPG/PNG/WebP dan maks. 5MB.');
+      redirect(APP_URL . '/profile.php?u=' . $profile['username']);
+    }
   }
-  $db->prepare("UPDATE users SET fullname=?, bio=?, profile_picture=? WHERE id=?")->execute([$name, $bio, $avUrl, $user['id']]);
-  flash('success', 'Profil diperbarui!');
-  redirect(APP_URL . '/profile.php');
+
+  // Simpan ke DB
+  $db->prepare("UPDATE users SET fullname=?, bio=?, profile_picture=? WHERE id=?")
+    ->execute([$name, $bio, $avUrl, $user['id']]);
+
+  // Update session agar navbar langsung berubah
+  $_SESSION['user']['fullname']       = $name;
+  $_SESSION['user']['profile_picture'] = $avUrl;
+
+  flash('success', 'Profil berhasil diperbarui!');
+  redirect(APP_URL . '/profile.php?u=' . $profile['username']);
 }
 ?>
 
