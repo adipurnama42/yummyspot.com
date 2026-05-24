@@ -1,8 +1,9 @@
 <?php
-$pageTitle = 'Edit Katalog — YummySpot';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/helpers.php';
+startSession();
 requireRole('owner');
-
+$user = currentUser();
+$pageTitle = 'Edit Katalog — YummySpot';
 $db = getDB();
 $id = (int)($_GET['id'] ?? 0);
 if (!$id) redirect(APP_URL . '/owner/catalogs.php');
@@ -78,6 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pg = 'catalogs';
+
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="app-wrap">

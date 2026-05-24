@@ -1,11 +1,9 @@
 <?php
-$pageTitle = 'Katalog Saya — YummySpot';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/helpers.php';
+startSession();
 requireRole('owner');
-
-$db  = getDB();
-$tab = $_GET['tab'] ?? 'active'; // active | trash
-
+$user = currentUser();
+$pageTitle = 'Katalog Saya — YummySpot';
 // ── Handle POST actions ──────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     verifyCsrf();
@@ -47,6 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     redirect(APP_URL . '/owner/catalogs.php?tab=' . $tab);
 }
+
+// ── HTML Output ─────────────────────────────────────────
+require_once __DIR__ . '/../includes/header.php';
+
+$db  = getDB();
+$tab = $_GET['tab'] ?? 'active'; // active | trash
+
+
 
 // ── Auto purge katalog yang sudah 30 hari di trash ──────
 $db->prepare("DELETE FROM catalogs WHERE owner_id=? AND deleted_at IS NOT NULL AND deleted_at < DATE_SUB(NOW(), INTERVAL 30 DAY)")

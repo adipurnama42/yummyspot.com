@@ -4,6 +4,8 @@ require_once __DIR__ . '/../config/app.php';
 
 function startSession() {
     if (session_status() === PHP_SESSION_NONE) {
+        // Buffer output agar header tidak terlanjur terkirim
+        if (!ob_get_level()) ob_start();
         session_set_cookie_params(['lifetime'=>86400*30,'path'=>'/','httponly'=>true,'samesite'=>'Lax']);
         session_start();
     }
@@ -19,10 +21,19 @@ function requireRole($roles) {
     if (!in_array($u['role'], $roles)) { header('Location:'.APP_URL.'/index.php?error=forbidden'); exit; }
 }
 function loginUser(array $u) {
-    startSession(); session_regenerate_id(true);
-    $_SESSION['user'] = ['id'=>$u['id'],'email'=>$u['email'],'username'=>$u['username'],
-        'fullname'=>$u['fullname'],'role'=>$u['role'],'profile_picture'=>$u['profile_picture']];
-    getDB()->prepare("UPDATE users SET created_at=created_at WHERE id=?")->execute([$u['id']]);
+    startSession();
+    // Hanya regenerate jika belum ada output
+    if (!headers_sent()) {
+        session_regenerate_id(true);
+    }
+    $_SESSION['user'] = [
+        'id'              => $u['id'],
+        'email'           => $u['email'],
+        'username'        => $u['username'],
+        'fullname'        => $u['fullname'],
+        'role'            => $u['role'],
+        'profile_picture' => $u['profile_picture'],
+    ];
 }
 function logoutUser()   { startSession(); session_destroy(); }
 
@@ -31,7 +42,12 @@ function e($s)           { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-
 function csrfToken()     { startSession(); if (empty($_SESSION['csrf'])) $_SESSION['csrf']=bin2hex(random_bytes(32)); return $_SESSION['csrf']; }
 function verifyCsrf()    { if (!hash_equals(csrfToken(), $_POST['csrf_token']??'')) { http_response_code(403); die('Invalid CSRF'); } }
 function csrfField()     { return '<input type="hidden" name="csrf_token" value="'.csrfToken().'">'; }
-function redirect($url)  { header('Location:'.$url); exit; }
+function redirect($url) {
+    // Flush buffer sebelum redirect
+    while (ob_get_level()) ob_end_clean();
+    header('Location:' . $url);
+    exit;
+}
 
 // Flash
 function flash($key, $msg=null) {

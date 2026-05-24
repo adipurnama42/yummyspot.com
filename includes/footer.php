@@ -92,6 +92,47 @@
 </div>
 <?php endif; ?>
 
+<!-- ── Mobile Bottom Navigation ───────────────── -->
+<?php
+$curPage = basename($_SERVER['PHP_SELF'], '.php');
+?>
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="<?= APP_URL ?>/index.php" class="mob-nav-item <?= $curPage==='index'?'active':'' ?>">
+      <i class="fa-<?= $curPage==='index'?'solid':'regular' ?> fa-house"></i>
+      <span>Beranda</span>
+    </a>
+    <a href="<?= APP_URL ?>/explore.php" class="mob-nav-item <?= $curPage==='explore'?'active':'' ?>">
+      <i class="fa-<?= $curPage==='explore'?'solid':'regular' ?> fa-compass"></i>
+      <span>Eksplorasi</span>
+    </a>
+    <?php if ($user && !$isDash): ?>
+    <button class="mob-nav-item" onclick="openModal('create-post-modal')" style="position:relative;">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 4px 12px rgba(255,107,53,.4);">
+        <i class="fa-solid fa-plus" style="color:#fff;font-size:1.1rem;"></i>
+      </div>
+      <span style="margin-top:.15rem;">Post</span>
+    </button>
+    <?php else: ?>
+    <a href="<?= APP_URL ?>/catalog.php" class="mob-nav-item <?= $curPage==='catalog'?'active':'' ?>">
+      <i class="fa-solid fa-map-pin"></i>
+      <span>Katalog</span>
+    </a>
+    <?php endif; ?>
+    <a href="<?= APP_URL ?>/<?= $user ? 'notifications.php' : 'login.php' ?>" class="mob-nav-item <?= $curPage==='notifications'?'active':'' ?>" style="position:relative;">
+      <i class="fa-<?= $curPage==='notifications'?'solid':'regular' ?> fa-bell"></i>
+      <?php if ($user && $notifCnt > 0): ?>
+      <span class="mob-nav-badge"><?= $notifCnt > 9 ? '9+' : $notifCnt ?></span>
+      <?php endif; ?>
+      <span>Notif</span>
+    </a>
+    <a href="<?= APP_URL ?>/<?= $user ? 'profile.php' : 'login.php' ?>" class="mob-nav-item <?= $curPage==='profile'?'active':'' ?>">
+      <i class="fa-<?= $curPage==='profile'?'solid':'regular' ?> fa-user"></i>
+      <span>Profil</span>
+    </a>
+  </div>
+</nav>
+
 <div id="toast-wrap"></div>
 <script src="<?= APP_URL ?>/assets/js/app.js"></script>
 <script>
@@ -355,5 +396,27 @@
 })(); // IIFE — semua variabel terisolasi
 </script>
 <?= $extraJs ?? '' ?>
+<script>
+// ── Mobile Drawer ────────────────────────────────────
+function openDrawer() {
+  document.getElementById('sidebar-drawer').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+  document.getElementById('sidebar-drawer').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Show hamburger on mobile
+function checkMobile() {
+  const hb = document.getElementById('hamburger-btn');
+  if (hb) hb.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+}
+checkMobile();
+window.addEventListener('resize', checkMobile);
+// Close drawer on ESC
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+</script>
 </body>
 </html>

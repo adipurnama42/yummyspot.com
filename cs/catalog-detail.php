@@ -1,7 +1,9 @@
 <?php
+require_once __DIR__ . '/../includes/helpers.php';
+startSession();
+requireRole(['cs', 'admin']);
 $pageTitle = 'Review Katalog — CS YummySpot';
 require_once __DIR__ . '/../includes/header.php';
-requireRole(['cs', 'admin']);
 
 $db  = getDB();
 $id  = (int)($_GET['id'] ?? 0);

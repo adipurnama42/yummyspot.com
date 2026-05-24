@@ -1,5 +1,17 @@
 <?php
 require_once __DIR__ . '/includes/helpers.php';
+startSession();
+$user = currentUser();
+
+// Smart back URL - jangan kembali ke halaman yang sama
+$_referer = $_SERVER['HTTP_REFERER'] ?? '';
+$_self    = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+// Kalau referrer adalah halaman ini sendiri (setelah submit komentar), abaikan
+if ($_referer && strpos($_referer, 'post.php') === false) {
+    $backUrl = $_referer;
+} else {
+    $backUrl = APP_URL . '/index.php';
+}
 
 $postId = (int)($_GET['id'] ?? 0);
 if (!$postId) redirect(APP_URL . '/index.php');
@@ -18,8 +30,6 @@ $post = $st->fetch();
 if (!$post) { http_response_code(404); die('Postingan tidak ditemukan.'); }
 
 $pageTitle = 'Postingan ' . $post['fullname'] . ' — YummySpot';
-require_once __DIR__ . '/includes/header.php';
-
 // Like & comment counts
 $lcSt = $db->prepare("SELECT COUNT(*) FROM likes WHERE post_id = ?");    $lcSt->execute([$postId]); $likeCount = (int)$lcSt->fetchColumn();
 $ccSt = $db->prepare("SELECT COUNT(*) FROM comments WHERE post_id = ?"); $ccSt->execute([$postId]); $cmtCount  = (int)$ccSt->fetchColumn();
@@ -44,7 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comment'])) {
             createNotif($post['user_id'], $user['id'], 'comment', $postId, $user['fullname'] . ' mengomentari postingan Anda');
         }
         flash('success', 'Komentar ditambahkan!');
-        redirect(APP_URL . '/post.php?id=' . $postId . '#comments');
+        // Kembali ke halaman asal, bukan ke post itu sendiri
+        redirect($backUrl);
     }
 }
 
@@ -75,6 +86,8 @@ $relPosts = $related->fetchAll();
 
 $pals = [['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b82f6','#eff6ff'],['#f59e0b','#fffbeb'],['#ec4899','#fdf2f8']];
 $pp   = $pals[($post['user_id'] - 1) % count($pals)];
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="app-wrap">
@@ -84,7 +97,7 @@ $pp   = $pals[($post['user_id'] - 1) % count($pals)];
 
     <!-- Back -->
     <div style="margin-bottom:.85rem;">
-        <a href="javascript:history.back()" class="btn btn-ghost btn-sm text-dim">
+        <a href="<?= e($backUrl) ?>" class="btn btn-ghost btn-sm text-dim">
             <i class="fa-solid fa-arrow-left fa-xs"></i> Kembali
         </a>
     </div>
@@ -117,11 +130,28 @@ $pp   = $pals[($post['user_id'] - 1) % count($pals)];
                     <?php endif; ?>
                 </div>
             </div>
-            <?php if ($user && $user['id'] == $post['user_id']): ?>
-            <button class="btn btn-ghost btn-icon btn-sm text-dim">
+            <div style="position:relative;">
+              <button class="btn btn-ghost btn-icon btn-sm text-dim"
+                onclick="togglePostMenu('d', event)" title="Opsi">
                 <i class="fa-solid fa-ellipsis"></i>
-            </button>
-            <?php endif; ?>
+              </button>
+              <div id="post-menu-d" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--border);border-radius:var(--r);min-width:160px;box-shadow:0 4px 20px rgba(0,0,0,.12);z-index:200;overflow:hidden;">
+                <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>toast('Link disalin!'))" style="display:flex;align-items:center;gap:.55rem;width:100%;padding:.6rem .85rem;background:transparent;border:none;cursor:pointer;font-size:.83rem;color:var(--text2);text-align:left;transition:background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'">
+                  <i class="fa-solid fa-link fa-xs" style="color:var(--text3);width:14px;"></i> Salin Link
+                </button>
+                <?php if ($user && $user['id'] == $post['user_id']): ?>
+                <div style="height:1px;background:var(--border);margin:.2rem 0;"></div>
+                <button onclick="confirmDeletePost(<?= $post['id'] ?>)" style="display:flex;align-items:center;gap:.55rem;width:100%;padding:.6rem .85rem;background:transparent;border:none;cursor:pointer;font-size:.83rem;color:var(--red);text-align:left;transition:background .15s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                  <i class="fa-solid fa-trash fa-xs" style="width:14px;"></i> Hapus Postingan
+                </button>
+                <?php elseif ($user): ?>
+                <div style="height:1px;background:var(--border);margin:.2rem 0;"></div>
+                <a href="<?= APP_URL ?>/report.php?type=post&id=<?= $post['id'] ?>" style="display:flex;align-items:center;gap:.55rem;width:100%;padding:.6rem .85rem;font-size:.83rem;color:var(--red);text-decoration:none;transition:background .15s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+                  <i class="fa-regular fa-flag fa-xs" style="width:14px;"></i> Laporkan
+                </a>
+                <?php endif; ?>
+              </div>
+            </div>
         </div>
 
         <!-- Image -->
@@ -162,6 +192,11 @@ $pp   = $pals[($post['user_id'] - 1) % count($pals)];
                 onclick="navigator.clipboard.writeText(window.location.href).then(()=>toast('Link disalin!'))">
                 <i class="fa-solid fa-share-nodes"></i>
             </button>
+            <?php if ($user && $user['id'] != $post['user_id']): ?>
+            <a href="<?= APP_URL ?>/report.php?type=post&id=<?= $post['id'] ?>" class="act-btn" style="color:var(--text3);" title="Laporkan">
+                <i class="fa-regular fa-flag"></i>
+            </a>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -429,4 +464,25 @@ function followAuthor(uid, btn) {
 }
 </script>
 
+<script>
+function togglePostMenu(id, e) {
+  e.stopPropagation();
+  const m = document.getElementById('post-menu-' + id);
+  m.style.display = m.style.display === 'block' ? 'none' : 'block';
+}
+document.addEventListener('click', () => {
+  document.querySelectorAll('[id^="post-menu-"]').forEach(m => m.style.display = 'none');
+});
+function confirmDeletePost(id) {
+  if (!confirm('Hapus postingan ini?')) return;
+  fetch('<?= APP_URL ?>/actions/post_delete.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'post_id=' + id + '&csrf_token=' + getCsrf()
+  }).then(r => r.json()).then(d => {
+    if (d.ok) { toast('Postingan dihapus'); setTimeout(() => location.href = '<?= APP_URL ?>/index.php', 1000); }
+    else toast(d.msg || 'Gagal', 'err');
+  });
+}
+</script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

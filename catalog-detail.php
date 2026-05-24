@@ -1,5 +1,16 @@
 <?php
 require_once __DIR__ . '/includes/helpers.php';
+startSession();
+$user    = currentUser();
+
+// Smart back URL
+$_referer = $_SERVER['HTTP_REFERER'] ?? '';
+if ($_referer && strpos($_referer, 'catalog-detail.php') === false) {
+    $backUrl = $_referer;
+} else {
+    $backUrl = APP_URL . '/catalog.php';
+}
+
 $slug    = trim($_GET['slug'] ?? '');
 if (!$slug) redirect(APP_URL . '/catalog.php');
 $db      = getDB();
@@ -24,8 +35,6 @@ if (!$cat) { http_response_code(404); die('Katalog tidak ditemukan.'); }
 $db->prepare("UPDATE catalogs SET total_likes=total_likes WHERE id=?")->execute([$cat['id']]); // just touch
 
 $pageTitle = e($cat['name']).' — YummySpot';
-require_once __DIR__ . '/includes/header.php';
-
 $wl = false; $myRating = null;
 if ($user) {
     $ws=$db->prepare("SELECT id FROM wishlists WHERE user_id=? AND catalog_id=?"); $ws->execute([$user['id'],$cat['id']]); $wl=(bool)$ws->fetchColumn();
@@ -46,11 +55,13 @@ $reviews  = $db->prepare("SELECT r.*,u.fullname,u.username,u.profile_picture FRO
 $posts    = $db->prepare("SELECT p.*,u.fullname,u.username FROM posts p JOIN users u ON p.user_id=u.id WHERE p.catalog_id=? AND p.status='published' ORDER BY p.created_at DESC LIMIT 6"); $posts->execute([$cat['id']]); $relPosts=$posts->fetchAll();
 $ratingDist=$db->prepare("SELECT rating,COUNT(*) AS cnt FROM ratings WHERE catalog_id=? GROUP BY rating ORDER BY rating DESC"); $ratingDist->execute([$cat['id']]); $ratingDist=$ratingDist->fetchAll(PDO::FETCH_KEY_PAIR);
 $pals=[['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b82f6','#eff6ff'],['#f59e0b','#fffbeb'],['#ec4899','#fdf2f8']];
+
+require_once __DIR__ . '/includes/header.php';
 ?>
 <div class="app-wrap">
 <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
 <main class="main" style="max-width:760px;margin:0 auto">
-  <div style="margin-bottom:.85rem"><a href="javascript:history.back()" class="btn btn-ghost btn-sm text-dim"><i class="fa-solid fa-arrow-left"></i> Kembali</a></div>
+  <div style="margin-bottom:.85rem"><a href="<?= e($backUrl) ?>" class="btn btn-ghost btn-sm text-dim"><i class="fa-solid fa-arrow-left"></i> Kembali</a></div>
 
   <!-- Status banner untuk CS/Admin jika bukan approved -->
   <?php if ($isStaff && $cat["verification_status"] !== "approved"): ?>
@@ -98,6 +109,11 @@ $pals=[['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b82
       <button onclick="toggleWishlist(<?= $cat['id'] ?>,this)" class="btn btn-sm btn-outline <?= $wl?'':'btn-outline' ?>" style="color:<?= $wl?'var(--accent)':'var(--text2)' ?>">
         <i class="fa-<?= $wl?'solid':'regular' ?> fa-bookmark"></i> <?= $wl?'Tersimpan':'Simpan' ?>
       </button>
+      <?php if ($user['id'] != $cat['owner_id']): ?>
+      <a href="<?= APP_URL ?>/report.php?type=catalog&id=<?= $cat['id'] ?>" class="btn btn-ghost btn-sm" style="color:var(--text3);">
+        <i class="fa-regular fa-flag fa-xs"></i> Laporkan
+      </a>
+      <?php endif; ?>
       <?php endif; ?>
     </div>
   </div>
@@ -186,16 +202,61 @@ $pals=[['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b82
 
 <!-- Right Panel: Info -->
 <aside class="right-panel">
-  <div class="card" style="margin-bottom:.85rem">
+  <div class="card" style="margin-bottom:.85rem;">
     <div class="card-body">
-      <div class="panel-ttl"><i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Informasi</div>
-      <?php if ($cat['address']): ?><div style="display:flex;gap:.5rem;margin-bottom:.55rem;font-size:.81rem"><i class="fa-solid fa-location-dot fa-xs" style="color:var(--red);margin-top:.15rem;flex-shrink:0"></i><span class="text-muted"><?= e($cat['address']) ?>, <?= e($cat['city']) ?></span></div><?php endif; ?>
-      <?php if ($cat['contact']): ?><div style="display:flex;gap:.5rem;margin-bottom:.55rem;font-size:.81rem"><i class="fa-brands fa-whatsapp fa-xs" style="color:var(--green);margin-top:.15rem"></i><a href="https://wa.me/<?= e($cat['contact']) ?>" class="text-muted"><?= e($cat['contact']) ?></a></div><?php endif; ?>
-      <?php if ($cat['open_time']): ?><div style="display:flex;gap:.5rem;margin-bottom:.55rem;font-size:.81rem"><i class="fa-regular fa-clock fa-xs" style="color:var(--blue);margin-top:.15rem"></i><span class="text-muted"><?= substr($cat['open_time'],0,5) ?> – <?= substr($cat['close_time'],0,5) ?></span></div><?php endif; ?>
+      <div style="font-size:.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;margin-bottom:.85rem;">
+        <i class="fa-solid fa-circle-info" style="color:var(--accent)"></i> Informasi
+      </div>
+
+      <?php if ($cat['address']): ?>
+      <div style="display:flex;gap:.65rem;align-items:flex-start;margin-bottom:.75rem;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-location-dot fa-xs" style="color:var(--red);"></i>
+        </div>
+        <div>
+          <div style="font-size:.68rem;color:var(--text3);font-weight:600;margin-bottom:.2rem;">Alamat</div>
+          <div style="font-size:.82rem;color:var(--text);line-height:1.55;"><?= e($cat['address']) ?>, <?= e($cat['city']) ?></div>
+        </div>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($cat['contact']): ?>
+      <div style="display:flex;gap:.65rem;align-items:center;margin-bottom:.75rem;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-brands fa-whatsapp fa-xs" style="color:var(--green);"></i>
+        </div>
+        <div>
+          <div style="font-size:.68rem;color:var(--text3);font-weight:600;margin-bottom:.2rem;">Kontak</div>
+          <a href="https://wa.me/<?= e($cat['contact']) ?>" style="font-size:.82rem;color:var(--green);font-weight:700;"><?= e($cat['contact']) ?></a>
+        </div>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($cat['open_time']): ?>
+      <div style="display:flex;gap:.65rem;align-items:center;">
+        <div style="width:30px;height:30px;border-radius:50%;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-regular fa-clock fa-xs" style="color:var(--blue);"></i>
+        </div>
+        <div>
+          <div style="font-size:.68rem;color:var(--text3);font-weight:600;margin-bottom:.2rem;">Jam Buka</div>
+          <div style="font-size:.82rem;color:var(--text);font-weight:700;"><?= substr($cat['open_time'],0,5) ?> – <?= substr($cat['close_time'],0,5) ?></div>
+        </div>
+      </div>
+      <?php endif; ?>
+
     </div>
   </div>
-  <div style="text-align:center;font-size:.78rem;color:var(--text3);padding:.5rem">
-    <i class="fa-solid fa-eye fa-xs"></i> <?= fmtNum($cat['total_likes']) ?> suka · <i class="fa-regular fa-star fa-xs"></i> <?= $cat['total_reviews'] ?> ulasan
+
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:.65rem;text-align:center;">
+      <div style="font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:900;color:var(--red);"><?= fmtNum($cat['total_likes']) ?></div>
+      <div style="font-size:.65rem;color:var(--text3);">Suka</div>
+    </div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:.65rem;text-align:center;">
+      <div style="font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:900;color:var(--amber);"><?= $cat['total_reviews'] ?></div>
+      <div style="font-size:.65rem;color:var(--text3);">Ulasan</div>
+    </div>
   </div>
 </aside>
 </div>

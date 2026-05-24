@@ -26,6 +26,9 @@ $isCatalogPage = in_array($pg, ['catalog', 'catalog-detail']);
     <a href="<?= APP_URL ?>/profile.php" class="sb-item <?= $pg==='profile' ? 'active' : '' ?>">
       <i class="fa-regular fa-user si"></i> Profil
     </a>
+    <a href="<?= APP_URL ?>/my-reports.php" class="sb-item <?= $pg==='my-reports' ? 'active' : '' ?>">
+      <i class="fa-regular fa-flag si"></i> Laporan Saya
+    </a>
     <?php endif; ?>
   </div>
 

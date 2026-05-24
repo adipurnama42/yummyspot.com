@@ -1,8 +1,8 @@
 <?php
-$pageTitle = 'CS Dashboard — YummySpot';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/helpers.php';
+startSession();
 requireRole(['cs', 'admin']);
-
+$pageTitle = 'CS Dashboard — YummySpot';
 $db  = getDB();
 $tab = $_GET['tab'] ?? 'catalogs';
 
@@ -87,6 +87,8 @@ if ($tab === 'reports') {
 }
 
 $pg = 'dashboard';
+
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="app-wrap">

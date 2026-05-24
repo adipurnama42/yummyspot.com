@@ -1,7 +1,10 @@
 <?php
+require_once __DIR__ . '/includes/helpers.php';
+startSession();
+requireLogin();
+$user = currentUser();
 $pageTitle = 'Wishlist Saya — YummySpot';
 require_once __DIR__ . '/includes/header.php';
-requireLogin();
 
 $db   = getDB();
 $page = max(1, (int)($_GET['page'] ?? 1));

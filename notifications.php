@@ -1,7 +1,10 @@
 <?php
+require_once __DIR__ . '/includes/helpers.php';
+startSession();
+requireLogin();
+$user = currentUser();
 $pageTitle = 'Notifikasi — YummySpot';
 require_once __DIR__ . '/includes/header.php';
-requireLogin();
 
 $db = getDB();
 

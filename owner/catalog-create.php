@@ -1,7 +1,9 @@
 <?php
-$pageTitle = 'Tambah Katalog — YummySpot';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/helpers.php';
+startSession();
 requireRole('owner');
+$user = currentUser();
+$pageTitle = 'Tambah Katalog — YummySpot';
 $db=$db=getDB(); $errs=[]; $v=[];
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     verifyCsrf(); $v=$_POST;
@@ -21,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
 }
 $cats=$db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
 $pg='catalog-create';
+
+require_once __DIR__ . '/../includes/header.php';
 ?>
 <div class="app-wrap">
 <aside class="sidebar dash-sidebar">
