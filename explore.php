@@ -164,7 +164,7 @@ $stats = [
                         <strong><?= number_format($c['avg_rating'], 1) ?></strong>
                         <span style="color:var(--text3)">(<?= $c['total_reviews'] ?> ulasan)</span>
                         <?php if ($c['verification_status'] === 'approved'): ?>
-                        <i class="fa-solid fa-circle-check fa-xs" style="color:var(--green);margin-left:auto" title="Terverifikasi"></i>
+                        <i class="fa-solid fa-check-circle fa-xs" style="color:var(--green);margin-left:auto" title="Terverifikasi"></i>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -276,7 +276,7 @@ $stats = [
     <div style="margin-bottom:1.5rem;">
         <div class="panel-ttl"><i class="fa-solid fa-chart-simple" style="color:var(--accent)"></i> Statistik Platform</div>
         <?php foreach ([
-            ['fa-building-store','Katalog Aktif', $stats['catalogs'], 'var(--accent)'],
+            ['fa-store','Katalog Aktif', $stats['catalogs'], 'var(--accent)'],
             ['fa-users',         'Pengguna',      $stats['users'],    'var(--blue)'],
             ['fa-star',          'Total Ulasan',  $stats['reviews'],  'var(--amber)'],
             ['fa-image',         'Postingan',     $stats['posts'],    'var(--purple)'],

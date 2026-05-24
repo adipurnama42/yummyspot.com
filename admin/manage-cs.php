@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->prepare("INSERT INTO users (fullname, username, email, password, role, status) VALUES (?,?,?,?,'cs','active')")
                    ->execute([$fullname, $username, $email, $hash]);
                 flash('success', 'Akun CS berhasil ditambahkan!');
-                redirect(APP_URL . '/admin/manage-cs.php');
+                redirect(route('admin.cs'));
             }
         }
         $msg = implode(' ', $errs);
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET status = ? WHERE id = ? AND role = 'cs'")
                ->execute([$status, $id]);
             flash('success', $status === 'active' ? 'Akun CS diaktifkan.' : 'Akun CS disuspend.');
-            redirect(APP_URL . '/admin/manage-cs.php');
+            redirect(route('admin.cs'));
         }
     }
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET password = ? WHERE id = ? AND role = 'cs'")
                ->execute([$hash, $id]);
             flash('success', 'Password CS berhasil direset.');
-            redirect(APP_URL . '/admin/manage-cs.php');
+            redirect(route('admin.cs'));
         } else {
             $msg = 'Password minimal 6 karakter.';
         }
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET role = 'user', status = 'suspended' WHERE id = ? AND role = 'cs'")
                ->execute([$id]);
             flash('success', 'Akun CS dihapus.');
-            redirect(APP_URL . '/admin/manage-cs.php');
+            redirect(route('admin.cs'));
         }
     }
 }
@@ -107,7 +107,7 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
     <a href="dashboard.php"              class="sb-item"><i class="fa-solid fa-gauge si"></i> Overview</a>
     <a href="dashboard.php?tab=users"    class="sb-item"><i class="fa-solid fa-users si"></i> Pengguna</a>
-    <a href="dashboard.php?tab=catalogs" class="sb-item"><i class="fa-solid fa-building-store si"></i> Katalog</a>
+    <a href="dashboard.php?tab=catalogs" class="sb-item"><i class="fa-solid fa-store si"></i> Katalog</a>
     <a href="dashboard.php?tab=reports"  class="sb-item"><i class="fa-solid fa-flag si"></i> Laporan</a>
     <a href="manage-cs.php"              class="sb-item active"><i class="fa-solid fa-shield-halved si"></i> Kelola Tim CS</a>
     <a href="<?= APP_URL ?>/cs/dashboard.php" class="sb-item"><i class="fa-solid fa-eye si"></i> Lihat CS Panel</a>

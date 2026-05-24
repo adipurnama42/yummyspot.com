@@ -1,0 +1,45 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /yummyspot/
+
+# ── Abaikan file/folder yang memang ada ─────────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ── Auth ─────────────────────────────────────────────────
+RewriteRule ^login$              login.php [L,QSA]
+RewriteRule ^register$           register.php [L,QSA]
+RewriteRule ^logout$             logout.php [L,QSA]
+
+# ── Halaman utama ─────────────────────────────────────────
+RewriteRule ^explore$            explore.php [L,QSA]
+RewriteRule ^katalog$            catalog.php [L,QSA]
+RewriteRule ^katalog/([^/]+)$    catalog-detail.php?slug=$1 [L,QSA]
+RewriteRule ^wishlist$           wishlist.php [L,QSA]
+RewriteRule ^notifikasi$         notifications.php [L,QSA]
+RewriteRule ^laporan-saya$       my-reports.php [L,QSA]
+
+# ── Post & Profil ─────────────────────────────────────────
+RewriteRule ^post/([0-9]+)$      post.php?id=$1 [L,QSA]
+RewriteRule ^user/([^/]+)$       profile.php?u=$1 [L,QSA]
+RewriteRule ^laporan$            report.php [L,QSA]
+
+# ── Owner Panel ───────────────────────────────────────────
+RewriteRule ^owner$              owner/dashboard.php [L,QSA]
+RewriteRule ^owner/katalog$      owner/catalogs.php [L,QSA]
+RewriteRule ^owner/tambah$       owner/catalog-create.php [L,QSA]
+RewriteRule ^owner/edit/([0-9]+)$ owner/catalog-edit.php?id=$1 [L,QSA]
+RewriteRule ^owner/ulasan$       owner/reviews.php [L,QSA]
+RewriteRule ^owner/analitik$     owner/analytics.php [L,QSA]
+
+# ── CS Panel ──────────────────────────────────────────────
+RewriteRule ^cs$                 cs/dashboard.php [L,QSA]
+RewriteRule ^cs/katalog/([0-9]+)$ cs/catalog-detail.php?id=$1 [L,QSA]
+
+# ── Admin Panel ───────────────────────────────────────────
+RewriteRule ^admin$              admin/dashboard.php [L,QSA]
+RewriteRule ^admin/cs$           admin/manage-cs.php [L,QSA]
+
+# ── Fallback: root ke index ───────────────────────────────
+RewriteRule ^$                   index.php [L]

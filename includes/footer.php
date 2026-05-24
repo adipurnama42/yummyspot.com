@@ -99,11 +99,11 @@ $curPage = basename($_SERVER['PHP_SELF'], '.php');
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
     <a href="<?= APP_URL ?>/index.php" class="mob-nav-item <?= $curPage==='index'?'active':'' ?>">
-      <i class="fa-<?= $curPage==='index'?'solid':'regular' ?> fa-house"></i>
+      <i class="fa-solid fa-house"></i>
       <span>Beranda</span>
     </a>
     <a href="<?= APP_URL ?>/explore.php" class="mob-nav-item <?= $curPage==='explore'?'active':'' ?>">
-      <i class="fa-<?= $curPage==='explore'?'solid':'regular' ?> fa-compass"></i>
+      <i class="fa-solid fa-compass"></i>
       <span>Eksplorasi</span>
     </a>
     <?php if ($user && !$isDash): ?>
@@ -120,14 +120,14 @@ $curPage = basename($_SERVER['PHP_SELF'], '.php');
     </a>
     <?php endif; ?>
     <a href="<?= APP_URL ?>/<?= $user ? 'notifications.php' : 'login.php' ?>" class="mob-nav-item <?= $curPage==='notifications'?'active':'' ?>" style="position:relative;">
-      <i class="fa-<?= $curPage==='notifications'?'solid':'regular' ?> fa-bell"></i>
+      <i class="fa-solid fa-bell"></i>
       <?php if ($user && $notifCnt > 0): ?>
       <span class="mob-nav-badge"><?= $notifCnt > 9 ? '9+' : $notifCnt ?></span>
       <?php endif; ?>
       <span>Notif</span>
     </a>
     <a href="<?= APP_URL ?>/<?= $user ? 'profile.php' : 'login.php' ?>" class="mob-nav-item <?= $curPage==='profile'?'active':'' ?>">
-      <i class="fa-<?= $curPage==='profile'?'solid':'regular' ?> fa-user"></i>
+      <i class="fa-solid fa-user"></i>
       <span>Profil</span>
     </a>
   </div>

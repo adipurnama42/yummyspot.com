@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         $cid=$db->lastInsertId();
         if($thumb) $db->prepare("UPDATE catalogs SET thumbnail=? WHERE id=?")->execute([$thumb,$cid]);
         flash('success','Katalog berhasil dibuat! Menunggu verifikasi CS.');
-        redirect(APP_URL.'/owner/dashboard.php');
+        redirect(route('owner'));
     }
 }
 $cats=$db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
@@ -30,7 +30,7 @@ require_once __DIR__ . '/../includes/header.php';
 <aside class="sidebar dash-sidebar">
   <div style="padding:.5rem .65rem .85rem;border-bottom:1px solid var(--border);margin-bottom:.5rem"><div style="font-size:.7rem;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.08em"><i class="fa-solid fa-store"></i> Panel Pemilik</div></div>
   <a href="dashboard.php"      class="sb-item"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-  <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+  <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
   <a href="catalog-create.php" class="sb-item active"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
   <a href="reviews.php"        class="sb-item"><i class="fa-solid fa-star si"></i> Ulasan</a>
   <a href="analytics.php"      class="sb-item"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>

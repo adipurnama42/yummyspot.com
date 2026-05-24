@@ -5,7 +5,7 @@
 // Hapus setelah selesai!
 // ============================================================
 $base = __DIR__ . '/uploads/';
-$folders = ['avatars', 'catalogs', 'posts', 'gallery'];
+$folders = ['avatars', 'catalogs', 'posts', 'gallery', 'reports'];
 $results = [];
 
 foreach ($folders as $f) {

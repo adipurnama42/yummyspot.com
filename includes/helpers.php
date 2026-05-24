@@ -113,3 +113,40 @@ function createNotif($userId, $fromId, $type, $targetId, $msg) {
     getDB()->prepare("INSERT INTO notifications (user_id,from_user_id,type,target_id,message) VALUES (?,?,?,?,?)")
            ->execute([$userId, $fromId, $type, $targetId, $msg]);
 }
+
+// ── URL Helper ───────────────────────────────────────────
+function url($path = '') {
+    return rtrim(APP_URL, '/') . '/' . ltrim($path, '/');
+}
+
+function route($name, $param = null) {
+    $map = [
+        'home'          => '',
+        'login'         => 'login',
+        'register'      => 'register',
+        'logout'        => 'logout',
+        'explore'       => 'explore',
+        'catalog'       => 'katalog',
+        'wishlist'      => 'wishlist',
+        'notifications' => 'notifikasi',
+        'my-reports'    => 'laporan-saya',
+        'owner'         => 'owner',
+        'owner.catalogs'=> 'owner/katalog',
+        'owner.create'  => 'owner/tambah',
+        'owner.reviews' => 'owner/ulasan',
+        'owner.analytics'=> 'owner/analitik',
+        'cs'            => 'cs',
+        'admin'         => 'admin',
+        'admin.cs'      => 'admin/cs',
+    ];
+
+    // Route dengan parameter
+    if ($name === 'post'    && $param) return url('post/'    . $param);
+    if ($name === 'profile' && $param) return url('user/'    . $param);
+    if ($name === 'katalog' && $param) return url('katalog/' . $param);
+    if ($name === 'owner.edit' && $param) return url('owner/edit/' . $param);
+    if ($name === 'cs.katalog' && $param) return url('cs/katalog/' . $param);
+    if ($name === 'report'  && $param) return url('laporan?' . $param);
+
+    return url($map[$name] ?? $name);
+}

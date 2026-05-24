@@ -74,7 +74,7 @@ $pg   = 'reviews';
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="dashboard.php"      class="sb-item"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-    <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+    <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
     <a href="catalog-create.php" class="sb-item"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
     <a href="reviews.php"        class="sb-item active"><i class="fa-solid fa-star si"></i> Ulasan</a>
     <a href="analytics.php"      class="sb-item"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>

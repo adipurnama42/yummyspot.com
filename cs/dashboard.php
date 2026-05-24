@@ -101,7 +101,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="?tab=catalogs" class="sb-item <?= $tab==='catalogs'?'active':'' ?>">
-        <i class="fa-solid fa-building-store si"></i> Semua Katalog
+        <i class="fa-solid fa-store si"></i> Semua Katalog
         <?php if ($pendingCount): ?><span class="sb-count"><?= $pendingCount ?></span><?php endif; ?>
     </a>
     <a href="?tab=reports" class="sb-item <?= $tab==='reports'?'active':'' ?>">
@@ -121,7 +121,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div>
             <h1 style="font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;">
                 <?= $tab === 'catalogs'
-                    ? '<i class="fa-solid fa-building-store" style="color:var(--accent)"></i> Semua Katalog'
+                    ? '<i class="fa-solid fa-store" style="color:var(--accent)"></i> Semua Katalog'
                     : '<i class="fa-solid fa-flag" style="color:var(--red)"></i> Laporan Pengguna' ?>
             </h1>
         </div>
@@ -205,7 +205,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </td>
                 <td>
                     <?php
-                    $smap = ['approved'=>['badge-success','fa-circle-check','Approved'],'pending'=>['badge-warning','fa-clock','Pending'],'rejected'=>['badge-danger','fa-circle-xmark','Ditolak']];
+                    $smap = ['approved'=>['badge-success','fa-check-circle','Approved'],'pending'=>['badge-warning','fa-clock','Pending'],'rejected'=>['badge-danger','fa-times-circle','Ditolak']];
                     [$bc,$si,$sl] = $smap[$c['verification_status']] ?? ['badge-default','fa-circle','Unknown'];
                     ?>
                     <span class="badge <?= $bc ?>">
@@ -338,7 +338,7 @@ require_once __DIR__ . '/../includes/header.php';
                     </form>
                     <?php else: ?>
                     <span style="font-size:.72rem;color:var(--text3);text-align:center;">
-                        <i class="fa-solid fa-circle-check fa-xs" style="color:var(--green)"></i> Done
+                        <i class="fa-solid fa-check-circle fa-xs" style="color:var(--green)"></i> Done
                     </span>
                     <?php endif; ?>
                     </div>

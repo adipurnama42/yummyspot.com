@@ -75,7 +75,7 @@ $pg = 'analytics';
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="dashboard.php"      class="sb-item"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-    <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+    <a href="catalogs.php"       class="sb-item"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
     <a href="catalog-create.php" class="sb-item"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
     <a href="reviews.php"        class="sb-item"><i class="fa-solid fa-star si"></i> Ulasan</a>
     <a href="analytics.php"      class="sb-item active"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>
@@ -114,7 +114,7 @@ $pg = 'analytics';
         <h3 style="font-family:'Nunito',sans-serif;font-weight:800;margin-bottom:.4rem;color:var(--text2);">Belum ada katalog aktif</h3>
         <p style="font-size:.85rem;color:var(--text3);margin-bottom:1.25rem;">Verifikasi katalogmu terlebih dahulu untuk melihat analitik.</p>
         <a href="catalogs.php" class="btn btn-primary">
-            <i class="fa-solid fa-building-store fa-xs"></i> Lihat Katalog Saya
+            <i class="fa-solid fa-store fa-xs"></i> Lihat Katalog Saya
         </a>
     </div>
 

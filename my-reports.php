@@ -36,11 +36,11 @@ require_once __DIR__ . '/includes/header.php';
 $statusMap = [
     'pending' => ['badge-danger',  'fa-clock',         'Menunggu',   'Laporan sedang menunggu ditinjau CS'],
     'process' => ['badge-warning', 'fa-spinner',       'Diproses',   'Laporan sedang ditangani CS'],
-    'done'    => ['badge-success', 'fa-circle-check',  'Selesai',    'Laporan telah diselesaikan'],
+    'done'    => ['badge-success', 'fa-check-circle',  'Selesai',    'Laporan telah diselesaikan'],
 ];
 $typeMap = [
     'spam'          => ['fa-envelope-circle-check', 'var(--amber)', 'Spam'],
-    'fake'          => ['fa-circle-xmark',          'var(--red)',   'Informasi Palsu'],
+    'fake'          => ['fa-times-circle',          'var(--red)',   'Informasi Palsu'],
     'inappropriate' => ['fa-triangle-exclamation',  'var(--red)',   'Konten Tidak Pantas'],
     'bug'           => ['fa-bug',                   'var(--blue)',  'Bug / Masalah Teknis'],
 ];

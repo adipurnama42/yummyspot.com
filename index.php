@@ -5,8 +5,8 @@ startSession();
 // CS dan Admin redirect ke panel masing-masing — tidak boleh akses feed
 if (isLoggedIn()) {
     $r = currentUser()['role'];
-    if ($r === 'cs')    redirect(APP_URL . '/cs/dashboard.php');
-    if ($r === 'admin') redirect(APP_URL . '/admin/dashboard.php');
+    if ($r === 'cs')    redirect(route('cs'));
+    if ($r === 'admin') redirect(route('admin'));
 }
 
 $pageTitle = 'Beranda — YummySpot';

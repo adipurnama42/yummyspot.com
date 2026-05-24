@@ -8,11 +8,11 @@ $_referer = $_SERVER['HTTP_REFERER'] ?? '';
 if ($_referer && strpos($_referer, 'catalog-detail.php') === false) {
     $backUrl = $_referer;
 } else {
-    $backUrl = APP_URL . '/catalog.php';
+    $backUrl = route('catalog');
 }
 
 $slug    = trim($_GET['slug'] ?? '');
-if (!$slug) redirect(APP_URL . '/catalog.php');
+if (!$slug) redirect(route('catalog'));
 $db      = getDB();
 $visitor = currentUser();
 
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['review'])) {
         if ($myRating) { $db->prepare("UPDATE ratings SET rating=?,review=? WHERE id=?")->execute([$rating,$review,$myRating['id']]); }
         else           { $db->prepare("INSERT INTO ratings (user_id,catalog_id,rating,review) VALUES (?,?,?,?)")->execute([$user['id'],$cat['id'],$rating,$review]); $db->prepare("UPDATE catalogs SET total_reviews=total_reviews+1 WHERE id=?")->execute([$cat['id']]); }
         $avg=$db->prepare("SELECT AVG(rating) FROM ratings WHERE catalog_id=?"); $avg->execute([$cat['id']]); $db->prepare("UPDATE catalogs SET avg_rating=? WHERE id=?")->execute([round($avg->fetchColumn(),2),$cat['id']]);
-        flash('success','Ulasan berhasil disimpan!'); redirect(APP_URL.'/catalog-detail.php?slug='.$slug);
+        flash('success','Ulasan berhasil disimpan!'); redirect(route('katalog', $slug);)
     }
 }
 $gallery  = $db->prepare("SELECT * FROM catalog_images WHERE catalog_id=? LIMIT 9"); $gallery->execute([$cat['id']]); $gallery=$gallery->fetchAll();
@@ -65,7 +65,7 @@ require_once __DIR__ . '/includes/header.php';
 
   <!-- Status banner untuk CS/Admin jika bukan approved -->
   <?php if ($isStaff && $cat["verification_status"] !== "approved"): ?>
-  <?php $bannerMap = ["pending"=>["alert-warning","fa-clock","Katalog ini sedang menunggu verifikasi dari CS."],"rejected"=>["alert-error","fa-circle-xmark","Katalog ini telah ditolak dan tidak tampil ke publik."]]; [$bc,$bi,$bm]=$bannerMap[$cat["verification_status"]]??["alert-info","fa-info-circle","Status tidak diketahui."]; ?>
+  <?php $bannerMap = ["pending"=>["alert-warning","fa-clock","Katalog ini sedang menunggu verifikasi dari CS."],"rejected"=>["alert-error","fa-times-circle","Katalog ini telah ditolak dan tidak tampil ke publik."]]; [$bc,$bi,$bm]=$bannerMap[$cat["verification_status"]]??["alert-info","fa-info-circle","Status tidak diketahui."]; ?>
   <div class="alert <?= $bc ?>" style="margin-bottom:.85rem">
     <i class="fa-solid <?= $bi ?>"></i>
     <div><strong>Status: <?= ucfirst($cat["verification_status"]) ?></strong> — <?= $bm ?>
@@ -80,7 +80,7 @@ require_once __DIR__ . '/includes/header.php';
     <?php if ($cat['thumbnail']): ?><img src="<?= e($cat['thumbnail']) ?>" alt="" style="width:100%;height:100%;object-fit:cover">
     <?php else: ?><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;color:var(--text3);opacity:.3"><i class="fa-solid <?= e($cat['cat_icon']) ?>"></i></div><?php endif; ?>
     <?php if ($cat['verification_status']==='approved'): ?>
-    <div style="position:absolute;top:.85rem;right:.85rem;background:var(--green);color:#fff;padding:.35rem .8rem;border-radius:20px;font-size:.75rem;font-weight:700;display:flex;align-items:center;gap:.3rem"><i class="fa-solid fa-circle-check fa-xs"></i> Terverifikasi</div>
+    <div style="position:absolute;top:.85rem;right:.85rem;background:var(--green);color:#fff;padding:.35rem .8rem;border-radius:20px;font-size:.75rem;font-weight:700;display:flex;align-items:center;gap:.3rem"><i class="fa-solid fa-check-circle fa-xs"></i> Terverifikasi</div>
     <?php endif; ?>
   </div>
 

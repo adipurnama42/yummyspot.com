@@ -106,8 +106,8 @@ require_once __DIR__ . '/../includes/header.php';
 
 // FA icon options
 $iconOptions = [
-    'fa-utensils','fa-mug-hot','fa-mountain','fa-umbrella-beach',
-    'fa-landmark','fa-masks-theater','fa-hotel','fa-bag-shopping',
+    'fa-utensils','fa-mug-saucer','fa-mountain','fa-water',
+    'fa-landmark','fa-star','fa-hotel','fa-cart-shopping',
     'fa-map-pin','fa-star','fa-heart','fa-camera','fa-tree',
     'fa-fish','fa-burger','fa-pizza-slice','fa-ice-cream',
     'fa-wine-glass','fa-coffee','fa-store','fa-tag',
@@ -361,7 +361,7 @@ $iconOptions = [
                     <?= csrfField() ?><input type="hidden" name="action" value="resolve_report"><input type="hidden" name="id" value="<?= $r['id'] ?>">
                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Tandai selesai?')"><i class="fa-solid fa-check fa-xs"></i></button>
                 </form>
-                <?php else: ?><span class="text-dim text-xs"><i class="fa-solid fa-circle-check fa-xs" style="color:var(--green)"></i></span><?php endif; ?>
+                <?php else: ?><span class="text-dim text-xs"><i class="fa-solid fa-check-circle fa-xs" style="color:var(--green)"></i></span><?php endif; ?>
             </td>
         </tr>
         <?php endforeach; ?>

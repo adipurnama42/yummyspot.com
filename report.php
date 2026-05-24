@@ -11,7 +11,7 @@ $targetId   = (int)($_GET['id'] ?? 0);
 // Validasi target
 if (!in_array($targetType, ['post','catalog']) || !$targetId) {
     flash('error', 'Target laporan tidak valid.');
-    redirect(APP_URL . '/index.php');
+    redirect(route('home'));
 }
 
 // Ambil nama target
@@ -19,13 +19,13 @@ if ($targetType === 'post') {
     $st = $db->prepare("SELECT p.id, u.fullname FROM posts p JOIN users u ON p.user_id=u.id WHERE p.id=? AND p.status='published'");
     $st->execute([$targetId]);
     $target = $st->fetch();
-    if (!$target) { flash('error','Postingan tidak ditemukan.'); redirect(APP_URL.'/index.php'); }
+    if (!$target) { flash('error','Postingan tidak ditemukan.'); redirect(route('home')); }
     $targetName = 'Postingan oleh ' . $target['fullname'];
 } else {
     $st = $db->prepare("SELECT id, name, slug FROM catalogs WHERE id=? AND verification_status='approved'");
     $st->execute([$targetId]);
     $target = $st->fetch();
-    if (!$target) { flash('error','Katalog tidak ditemukan.'); redirect(APP_URL.'/catalog.php'); }
+    if (!$target) { flash('error','Katalog tidak ditemukan.'); redirect(route('catalog')); }
     $targetName = 'Katalog: ' . $target['name'];
 }
 
@@ -34,9 +34,9 @@ $_referer = $_SERVER['HTTP_REFERER'] ?? '';
 if ($_referer && strpos($_referer, 'report.php') === false) {
     $backUrl = $_referer;
 } elseif ($targetType === 'post') {
-    $backUrl = APP_URL . '/post.php?id=' . $targetId;
+    $backUrl = route('post', $targetId;)
 } else {
-    $backUrl = APP_URL . '/catalog-detail.php?slug=' . ($target['slug'] ?? '');
+    $backUrl = APP_URL . '/catalog-detail.php?slug=' . $target['slug'] ?? '');
 }
 
 // Cek sudah pernah lapor
@@ -121,7 +121,7 @@ require_once __DIR__ . '/includes/header.php';
                         <?php
                         $reasons = [
                             'spam'          => ['fa-envelope-circle-check', 'Spam',                'Konten berulang atau promosi berlebihan'],
-                            'fake'          => ['fa-circle-xmark',          'Informasi Palsu',     'Informasi tidak akurat atau menyesatkan'],
+                            'fake'          => ['fa-times-circle',          'Informasi Palsu',     'Informasi tidak akurat atau menyesatkan'],
                             'inappropriate' => ['fa-triangle-exclamation',  'Konten Tidak Pantas', 'Melanggar komunitas atau mengandung SARA'],
                             'bug'           => ['fa-bug',                   'Bug / Masalah Teknis','Ada kesalahan atau masalah pada konten'],
                         ];

@@ -5,10 +5,10 @@ startSession();
 // Redirect jika sudah login
 if (isLoggedIn()) {
     $u = currentUser();
-    if ($u['role'] === 'admin')     redirect(APP_URL . '/admin/dashboard.php');
-    elseif ($u['role'] === 'cs')    redirect(APP_URL . '/cs/dashboard.php');
-    elseif ($u['role'] === 'owner') redirect(APP_URL . '/owner/dashboard.php');
-    else redirect(APP_URL . '/index.php');
+    if ($u['role'] === 'admin')     redirect(route('admin'));
+    elseif ($u['role'] === 'cs')    redirect(route('cs'));
+    elseif ($u['role'] === 'owner') redirect(route('owner'));
+    else redirect(route('home'));
 }
 
 // ── Handle POST sebelum output apapun ───────────────────
@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = $st->fetch();
         if ($u && password_verify($pass, $u['password'])) {
             loginUser($u);
-            if ($u['role'] === 'admin')     redirect(APP_URL . '/admin/dashboard.php');
-            elseif ($u['role'] === 'cs')    redirect(APP_URL . '/cs/dashboard.php');
-            elseif ($u['role'] === 'owner') redirect(APP_URL . '/owner/dashboard.php');
-            else redirect($_GET['redirect'] ?? APP_URL . '/index.php');
+            if ($u['role'] === 'admin')     redirect(route('admin'));
+            elseif ($u['role'] === 'cs')    redirect(route('cs'));
+            elseif ($u['role'] === 'owner') redirect(route('owner'));
+            else redirect($_GET['redirect'] ?? route('home'));
         } else {
             $err = 'Email atau password salah.';
         }
@@ -83,29 +83,7 @@ require_once __DIR__ . '/includes/header.php';
       </button>
     </form>
 
-    <div class="divider"><span>Akun Demo</span></div>
-    <div class="demo-grid">
-      <button class="demo-btn" onclick="fillDemo('user@yummyspot.id')">
-        <div class="d-icon"><i class="fa-solid fa-user" style="color:var(--blue)"></i></div>
-        <div class="d-name">User</div>
-        <div class="d-role">Pengguna umum</div>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('owner@yummyspot.id')">
-        <div class="d-icon"><i class="fa-solid fa-store" style="color:var(--amber)"></i></div>
-        <div class="d-name">Pemilik</div>
-        <div class="d-role">Owner katalog</div>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('cs@yummyspot.com')">
-        <div class="d-icon"><i class="fa-solid fa-shield-halved" style="color:var(--green)"></i></div>
-        <div class="d-name">CS</div>
-        <div class="d-role">Customer Service</div>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('superadmin@yummyspot.com')">
-        <div class="d-icon"><i class="fa-solid fa-bolt" style="color:var(--red)"></i></div>
-        <div class="d-name">Admin</div>
-        <div class="d-role">Super Admin</div>
-      </button>
-    </div>
+
 
     <p style="text-align:center;font-size:.75rem;color:var(--text3);margin-top:1.1rem;">
       Belum punya akun?
@@ -114,11 +92,5 @@ require_once __DIR__ . '/includes/header.php';
   </div>
 </div>
 
-<script>
-function fillDemo(email) {
-  document.querySelector('[name="email"]').value = email;
-  document.getElementById('pw').value = 'password123';
-}
-</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

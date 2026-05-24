@@ -6,7 +6,7 @@ $user = currentUser();
 $pageTitle = 'Edit Katalog — YummySpot';
 $db = getDB();
 $id = (int)($_GET['id'] ?? 0);
-if (!$id) redirect(APP_URL . '/owner/catalogs.php');
+if (!$id) redirect(route('owner.catalogs'));
 
 // Pastikan katalog milik owner ini
 $st = $db->prepare("SELECT * FROM catalogs WHERE id = ? AND owner_id = ?");
@@ -14,7 +14,7 @@ $st->execute([$id, $user['id']]);
 $catalog = $st->fetch();
 if (!$catalog) {
     flash('error', 'Katalog tidak ditemukan.');
-    redirect(APP_URL . '/owner/catalogs.php');
+    redirect(route('owner.catalogs'));
 }
 
 $cats = $db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         flash('success', 'Katalog berhasil diperbarui!');
-        redirect(APP_URL . '/owner/catalogs.php');
+        redirect(route('owner.catalogs'));
     }
 }
 
@@ -93,7 +93,7 @@ require_once __DIR__ . '/../includes/header.php';
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="dashboard.php"      class="sb-item"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-    <a href="catalogs.php"       class="sb-item active"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+    <a href="catalogs.php"       class="sb-item active"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
     <a href="catalog-create.php" class="sb-item"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
     <a href="reviews.php"        class="sb-item"><i class="fa-solid fa-star si"></i> Ulasan</a>
     <a href="analytics.php"      class="sb-item"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>
@@ -119,9 +119,9 @@ require_once __DIR__ . '/../includes/header.php';
     <!-- Status badge -->
     <?php
     $statusMap = [
-        'approved' => ['badge-success', 'fa-circle-check',  'Aktif & Terverifikasi'],
+        'approved' => ['badge-success', 'fa-check-circle',  'Aktif & Terverifikasi'],
         'pending'  => ['badge-warning', 'fa-clock',          'Menunggu Verifikasi'],
-        'rejected' => ['badge-danger',  'fa-circle-xmark',  'Ditolak'],
+        'rejected' => ['badge-danger',  'fa-times-circle',  'Ditolak'],
         'draft'    => ['badge-default', 'fa-file',           'Draft'],
     ];
     [$bc, $si, $sl] = $statusMap[$catalog['verification_status']] ?? ['badge-default','fa-circle','Unknown'];
@@ -268,7 +268,7 @@ require_once __DIR__ . '/../includes/header.php';
                     <img id="new-thumb-img" src="" alt=""
                         style="width:100%;max-height:200px;object-fit:cover;border-radius:var(--r);border:1.5px solid var(--accent);">
                     <div style="font-size:.75rem;color:var(--accent);margin-top:.3rem;">
-                        <i class="fa-solid fa-circle-check fa-xs"></i> Foto baru siap diupload
+                        <i class="fa-solid fa-check-circle fa-xs"></i> Foto baru siap diupload
                     </div>
                 </div>
 

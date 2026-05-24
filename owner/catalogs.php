@@ -88,10 +88,10 @@ $trashCount = count($trashCatalogs);
 $pg = 'catalogs';
 
 $statusMap = [
-    'approved' => ['badge-success', 'fa-circle-check', 'Aktif'],
+    'approved' => ['badge-success', 'fa-check-circle', 'Aktif'],
     'pending'  => ['badge-warning', 'fa-clock',         'Pending'],
     'draft'    => ['badge-default', 'fa-file',           'Draft'],
-    'rejected' => ['badge-danger',  'fa-circle-xmark',  'Ditolak'],
+    'rejected' => ['badge-danger',  'fa-times-circle',  'Ditolak'],
 ];
 ?>
 
@@ -104,7 +104,7 @@ $statusMap = [
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="dashboard.php"      class="sb-item"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-    <a href="catalogs.php"       class="sb-item active"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+    <a href="catalogs.php"       class="sb-item active"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
     <a href="catalog-create.php" class="sb-item"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
     <a href="reviews.php"        class="sb-item"><i class="fa-solid fa-star si"></i> Ulasan</a>
     <a href="analytics.php"      class="sb-item"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>
@@ -118,7 +118,7 @@ $statusMap = [
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.65rem;">
         <div>
             <h1 style="font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;">
-                <i class="fa-solid fa-building-store" style="color:var(--accent)"></i> Katalog Saya
+                <i class="fa-solid fa-store" style="color:var(--accent)"></i> Katalog Saya
             </h1>
             <div style="font-size:.8rem;color:var(--text3);margin-top:.1rem;">
                 <?= count($activeCatalogs) ?> katalog aktif<?= $trashCount ? " · $trashCount di sampah" : '' ?>
@@ -132,7 +132,7 @@ $statusMap = [
     <!-- Tab -->
     <div class="tabs-nav" style="margin-bottom:1rem;">
         <a href="?tab=active" class="tab-item <?= $tab==='active'?'active':'' ?>">
-            <i class="fa-solid fa-building-store fa-xs"></i> Katalog Aktif
+            <i class="fa-solid fa-store fa-xs"></i> Katalog Aktif
             <span style="background:var(--accent);color:#fff;border-radius:20px;padding:.05rem .45rem;font-size:.65rem;margin-left:.3rem;"><?= count($activeCatalogs) ?></span>
         </a>
         <a href="?tab=trash" class="tab-item <?= $tab==='trash'?'active':'' ?>" style="<?= $trashCount?'color:var(--red)':'' ?>">

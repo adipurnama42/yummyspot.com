@@ -18,7 +18,7 @@ $pg = basename($_SERVER['PHP_SELF'],'.php');
     <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem"><?= e($user['fullname']) ?></div>
   </div>
   <a href="dashboard.php"      class="sb-item <?= $pg==='dashboard'?'active':'' ?>"><i class="fa-solid fa-chart-pie si"></i> Dashboard</a>
-  <a href="catalogs.php"       class="sb-item <?= $pg==='catalogs'?'active':'' ?>"><i class="fa-solid fa-building-store si"></i> Katalog Saya</a>
+  <a href="catalogs.php"       class="sb-item <?= $pg==='catalogs'?'active':'' ?>"><i class="fa-solid fa-store si"></i> Katalog Saya</a>
   <a href="catalog-create.php" class="sb-item <?= $pg==='catalog-create'?'active':'' ?>"><i class="fa-solid fa-plus si"></i> Tambah Katalog</a>
   <a href="reviews.php"        class="sb-item <?= $pg==='reviews'?'active':'' ?>"><i class="fa-solid fa-star si"></i> Ulasan</a>
   <a href="analytics.php"      class="sb-item <?= $pg==='analytics'?'active':'' ?>"><i class="fa-solid fa-chart-bar si"></i> Analitik</a>
@@ -31,14 +31,14 @@ $pg = basename($_SERVER['PHP_SELF'],'.php');
     <a href="catalog-create.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Tambah Katalog</a>
   </div>
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label"><i class="fa-solid fa-building-store" style="color:var(--accent)"></i> Katalog Aktif</div><div class="stat-value" style="color:var(--accent)"><?= count(array_filter($mycats,fn($c)=>$c['verification_status']==='approved')) ?></div><div class="stat-sub">dari <?= count($mycats) ?> total</div></div>
+    <div class="stat-card"><div class="stat-label"><i class="fa-solid fa-store" style="color:var(--accent)"></i> Katalog Aktif</div><div class="stat-value" style="color:var(--accent)"><?= count(array_filter($mycats,fn($c)=>$c['verification_status']==='approved')) ?></div><div class="stat-sub">dari <?= count($mycats) ?> total</div></div>
     <div class="stat-card"><div class="stat-label"><i class="fa-regular fa-heart" style="color:var(--red)"></i> Total Likes</div><div class="stat-value" style="color:var(--red)"><?= fmtNum((int)($stats['lk']??0)) ?></div><div class="stat-sub">semua katalog</div></div>
     <div class="stat-card"><div class="stat-label"><i class="fa-regular fa-star" style="color:var(--amber)"></i> Total Ulasan</div><div class="stat-value" style="color:var(--amber)"><?= fmtNum((int)($stats['rv']??0)) ?></div><div class="stat-sub">rata-rata <?= number_format((float)($stats['ar']??0),1) ?> ★</div></div>
     <div class="stat-card"><div class="stat-label"><i class="fa-solid fa-clock-rotate-left" style="color:var(--blue)"></i> Pending</div><div class="stat-value" style="color:var(--blue)"><?= count(array_filter($mycats,fn($c)=>$c['verification_status']==='pending')) ?></div><div class="stat-sub">menunggu verifikasi</div></div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:.85rem">
     <div class="card">
-      <div class="card-header"><span class="card-title"><i class="fa-solid fa-building-store" style="color:var(--accent)"></i> Katalog Saya</span><a href="catalog-create.php" class="btn btn-sm" style="color:var(--accent)"><i class="fa-solid fa-plus"></i></a></div>
+      <div class="card-header"><span class="card-title"><i class="fa-solid fa-store" style="color:var(--accent)"></i> Katalog Saya</span><a href="catalog-create.php" class="btn btn-sm" style="color:var(--accent)"><i class="fa-solid fa-plus"></i></a></div>
       <div style="padding:.4rem">
         <?php if (empty($mycats)): ?><div class="empty" style="padding:1.5rem"><div class="e-icon" style="font-size:1.5rem"><i class="fa-solid fa-store"></i></div><h3 style="font-size:.85rem">Belum ada katalog</h3><a href="catalog-create.php" class="btn btn-primary btn-sm mt-2">Buat Sekarang</a></div>
         <?php else: ?>

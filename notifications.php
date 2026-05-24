@@ -11,7 +11,7 @@ $db = getDB();
 // Mark all as read jika ada parameter
 if (isset($_GET['mark_read'])) {
     $db->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?")->execute([$user['id']]);
-    redirect(APP_URL . '/notifications.php');
+    redirect(route('notifications'));
 }
 
 $page = max(1, (int)($_GET['page'] ?? 1));
@@ -49,8 +49,8 @@ $typeMap = [
     'comment'  => ['fa-comment',       'var(--blue)',   'Mengomentari postinganmu'],
     'follow'   => ['fa-user-plus',     'var(--accent)', 'Mulai mengikutimu'],
     'review'   => ['fa-star',          'var(--amber)',  'Memberi ulasan'],
-    'verified' => ['fa-circle-check',  'var(--green)',  'Katalogmu diverifikasi'],
-    'rejected' => ['fa-circle-xmark',  'var(--red)',    'Katalogmu ditolak'],
+    'verified' => ['fa-check-circle',  'var(--green)',  'Katalogmu diverifikasi'],
+    'rejected' => ['fa-times-circle',  'var(--red)',    'Katalogmu ditolak'],
     'report'   => ['fa-flag',          'var(--amber)',  'Laporan baru'],
 ];
 
@@ -174,8 +174,8 @@ foreach ($notifs as $n) {
             <!-- Action link -->
             <?php
             $link = null;
-            if ($n['type'] === 'like' || $n['type'] === 'comment') $link = 'post.php?id=' . $n['target_id'];
-            elseif ($n['type'] === 'follow')   $link = 'profile.php?u=' . ($n['sender_username'] ?? '');
+            if ($n['type'] === 'like' || $n['type'] === 'comment') $link = APP_URL . '/post.php?id=' . $n['target_id'];
+            elseif ($n['type'] === 'follow')   $link = APP_URL . '/profile.php?u=' . $n['sender_username'] ?? '');
             elseif ($n['type'] === 'verified' || $n['type'] === 'rejected') $link = 'owner/catalogs.php';
             ?>
             <?php if ($link): ?>

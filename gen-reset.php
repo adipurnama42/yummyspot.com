@@ -77,9 +77,9 @@ $valid = password_verify($password, $hash);
         // Restore categories
         $cats = [
             ['Kuliner','fa-utensils'],['Wisata Alam','fa-mountain'],
-            ['Kafe','fa-mug-hot'],['Pantai','fa-umbrella-beach'],
-            ['Budaya','fa-landmark'],['Hiburan','fa-masks-theater'],
-            ['Hotel','fa-hotel'],['Belanja','fa-bag-shopping'],
+            ['Kafe','fa-mug-saucer'],['Pantai','fa-water'],
+            ['Budaya','fa-landmark'],['Hiburan','fa-star'],
+            ['Hotel','fa-hotel'],['Belanja','fa-cart-shopping'],
         ];
         $cstmt = $db->prepare("INSERT IGNORE INTO categories (name, icon) VALUES (?,?)");
         foreach ($cats as $c) $cstmt->execute($c);

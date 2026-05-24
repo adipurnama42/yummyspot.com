@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/header.php';
 
 $db  = getDB();
 $id  = (int)($_GET['id'] ?? 0);
-if (!$id) redirect(APP_URL . '/cs/dashboard.php');
+if (!$id) redirect(route('cs'));
 
 // Fetch katalog — CS bisa lihat semua status
 $st = $db->prepare("
@@ -65,20 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         createNotif($cat['owner_id'], $user['id'], 'verified', $id, 'Katalog "' . $cat['name'] . '" telah diverifikasi dan aktif!');
         flash('success', 'Katalog berhasil disetujui!');
     } elseif ($act === 'reject') {
-        if (!$note) { flash('error', 'Alasan penolakan wajib diisi.'); redirect(APP_URL . '/cs/catalog-detail.php?id=' . $id); }
+        if (!$note) { flash('error', 'Alasan penolakan wajib diisi.'); redirect(route('cs.katalog', $id);) }
         $db->prepare("UPDATE catalogs SET verification_status='rejected' WHERE id=?")->execute([$id]);
         $db->prepare("INSERT INTO catalog_verifications (catalog_id, cs_id, status, note) VALUES (?,?,'rejected',?)")->execute([$id, $user['id'], $note]);
         createNotif($cat['owner_id'], $user['id'], 'rejected', $id, 'Katalog "' . $cat['name'] . '" ditolak: ' . $note);
         flash('success', 'Katalog ditolak.');
     }
-    redirect(APP_URL . '/cs/catalog-detail.php?id=' . $id);
+    redirect(route('cs.katalog', $id);)
 }
 
 $pals = [['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b82f6','#eff6ff'],['#f59e0b','#fffbeb'],['#ec4899','#fdf2f8']];
 $statusMap = [
-    'approved' => ['var(--green)',  'fa-circle-check',  'Approved'],
+    'approved' => ['var(--green)',  'fa-check-circle',  'Approved'],
     'pending'  => ['var(--amber)', 'fa-clock',          'Pending'],
-    'rejected' => ['var(--red)',   'fa-circle-xmark',   'Ditolak'],
+    'rejected' => ['var(--red)',   'fa-times-circle',   'Ditolak'],
 ];
 [$stColor, $stIcon, $stLabel] = $statusMap[$cat['verification_status']] ?? ['var(--text3)','fa-circle','Unknown'];
 $pg = 'dashboard';
@@ -94,7 +94,7 @@ $pg = 'dashboard';
         <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem;"><?= e($user['fullname']) ?></div>
     </div>
     <a href="dashboard.php?tab=catalogs" class="sb-item active">
-        <i class="fa-solid fa-building-store si"></i> Semua Katalog
+        <i class="fa-solid fa-store si"></i> Semua Katalog
     </a>
     <a href="dashboard.php?tab=reports" class="sb-item">
         <i class="fa-solid fa-flag si"></i> Laporan
@@ -142,12 +142,12 @@ $pg = 'dashboard';
             <div style="display:flex;gap:.5rem;">
                 <?php if ($cat['verification_status'] !== 'approved'): ?>
                 <button class="btn btn-success btn-sm" onclick="openModal('approve-modal')">
-                    <i class="fa-solid fa-circle-check fa-xs"></i> Setujui
+                    <i class="fa-solid fa-check-circle fa-xs"></i> Setujui
                 </button>
                 <?php endif; ?>
                 <?php if ($cat['verification_status'] !== 'rejected'): ?>
                 <button class="btn btn-danger btn-sm" onclick="openModal('reject-modal')">
-                    <i class="fa-solid fa-circle-xmark fa-xs"></i> Tolak
+                    <i class="fa-solid fa-times-circle fa-xs"></i> Tolak
                 </button>
                 <?php endif; ?>
                 <?php if ($cat['verification_status'] === 'rejected'): ?>
@@ -331,7 +331,7 @@ $pg = 'dashboard';
                     <div style="display:flex;flex-direction:column;gap:.5rem;">
                         <?php foreach ($history as $h):
                             $hColor = $h['status']==='approved' ? 'var(--green)' : 'var(--red)';
-                            $hIcon  = $h['status']==='approved' ? 'fa-circle-check' : 'fa-circle-xmark';
+                            $hIcon  = $h['status']==='approved' ? 'fa-check-circle' : 'fa-times-circle';
                         ?>
                         <div style="border-left:3px solid <?= $hColor ?>;padding:.5rem .65rem;background:var(--bg);border-radius:0 var(--r-sm) var(--r-sm) 0;">
                             <div style="display:flex;align-items:center;gap:.35rem;margin-bottom:.2rem;">
@@ -359,7 +359,7 @@ $pg = 'dashboard';
 <div class="modal-ov" id="approve-modal">
     <div class="modal">
         <div class="modal-head">
-            <span class="modal-title"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Setujui Katalog</span>
+            <span class="modal-title"><i class="fa-solid fa-check-circle" style="color:var(--green)"></i> Setujui Katalog</span>
             <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
@@ -376,7 +376,7 @@ $pg = 'dashboard';
                 <div class="modal-foot">
                     <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('approve-modal')">Batal</button>
                     <button type="submit" class="btn btn-success btn-sm">
-                        <i class="fa-solid fa-circle-check fa-xs"></i> Ya, Setujui
+                        <i class="fa-solid fa-check-circle fa-xs"></i> Ya, Setujui
                     </button>
                 </div>
             </form>
@@ -388,7 +388,7 @@ $pg = 'dashboard';
 <div class="modal-ov" id="reject-modal">
     <div class="modal">
         <div class="modal-head">
-            <span class="modal-title"><i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i> Tolak Katalog</span>
+            <span class="modal-title"><i class="fa-solid fa-times-circle" style="color:var(--red)"></i> Tolak Katalog</span>
             <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body">
@@ -405,7 +405,7 @@ $pg = 'dashboard';
                 <div class="modal-foot">
                     <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('reject-modal')">Batal</button>
                     <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fa-solid fa-circle-xmark fa-xs"></i> Ya, Tolak
+                        <i class="fa-solid fa-times-circle fa-xs"></i> Ya, Tolak
                     </button>
                 </div>
             </form>
