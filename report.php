@@ -11,7 +11,7 @@ $targetId   = (int)($_GET['id'] ?? 0);
 // Validasi target
 if (!in_array($targetType, ['post','catalog']) || !$targetId) {
     flash('error', 'Target laporan tidak valid.');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 
 // Ambil nama target
@@ -19,13 +19,13 @@ if ($targetType === 'post') {
     $st = $db->prepare("SELECT p.id, u.fullname FROM posts p JOIN users u ON p.user_id=u.id WHERE p.id=? AND p.status='published'");
     $st->execute([$targetId]);
     $target = $st->fetch();
-    if (!$target) { flash('error','Postingan tidak ditemukan.'); redirect(route('home')); }
+    if (!$target) { flash('error','Postingan tidak ditemukan.'); redirect(APP_URL . '/index.php'); }
     $targetName = 'Postingan oleh ' . $target['fullname'];
 } else {
     $st = $db->prepare("SELECT id, name, slug FROM catalogs WHERE id=? AND verification_status='approved'");
     $st->execute([$targetId]);
     $target = $st->fetch();
-    if (!$target) { flash('error','Katalog tidak ditemukan.'); redirect(route('catalog')); }
+    if (!$target) { flash('error','Katalog tidak ditemukan.'); redirect(APP_URL . '/catalog.php'); }
     $targetName = 'Katalog: ' . $target['name'];
 }
 

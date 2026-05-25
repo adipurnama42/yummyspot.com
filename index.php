@@ -5,8 +5,8 @@ startSession();
 // CS dan Admin redirect ke panel masing-masing — tidak boleh akses feed
 if (isLoggedIn()) {
     $r = currentUser()['role'];
-    if ($r === 'cs')    redirect(route('cs'));
-    if ($r === 'admin') redirect(route('admin'));
+    if ($r === 'cs')    redirect(APP_URL . '/cs/dashboard.php');
+    if ($r === 'admin') redirect(APP_URL . '/admin/dashboard.php');
 }
 
 $pageTitle = 'Beranda — YummySpot';
@@ -88,7 +88,8 @@ $pals = [['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b
 
 <main class="main" style="max-width:640px; margin:0 auto;">
 
-  <!-- Stories -->
+  <!-- Stories — hanya tampil jika ada konten -->
+  <?php if ($user || !empty($stories)): ?>
   <div class="card" style="margin-bottom:1rem;padding:.85rem 1rem;">
     <div class="stories-wrap">
       <?php if ($user): ?>
@@ -118,6 +119,7 @@ $pals = [['#FF6B35','#fff5f0'],['#8b5cf6','#f5f3ff'],['#22c55e','#f0fdf4'],['#3b
       <?php endforeach; ?>
     </div>
   </div>
+  <?php endif; ?>
 
   <!-- Filter tabs -->
   <div style="display:flex;gap:.4rem;margin-bottom:1rem;">

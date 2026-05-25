@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         $cid=$db->lastInsertId();
         if($thumb) $db->prepare("UPDATE catalogs SET thumbnail=? WHERE id=?")->execute([$thumb,$cid]);
         flash('success','Katalog berhasil dibuat! Menunggu verifikasi CS.');
-        redirect(route('owner'));
+        redirect(APP_URL . '/owner/dashboard.php');
     }
 }
 $cats=$db->query("SELECT * FROM categories ORDER BY id")->fetchAll();

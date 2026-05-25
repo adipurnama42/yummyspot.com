@@ -5,10 +5,10 @@ startSession();
 // Redirect jika sudah login
 if (isLoggedIn()) {
     $u = currentUser();
-    if ($u['role'] === 'admin')     redirect(route('admin'));
-    elseif ($u['role'] === 'cs')    redirect(route('cs'));
-    elseif ($u['role'] === 'owner') redirect(route('owner'));
-    else redirect(route('home'));
+    if ($u['role'] === 'admin')     redirect(APP_URL . '/admin/dashboard.php');
+    elseif ($u['role'] === 'cs')    redirect(APP_URL . '/cs/dashboard.php');
+    elseif ($u['role'] === 'owner') redirect(APP_URL . '/owner/dashboard.php');
+    else redirect(APP_URL . '/index.php');
 }
 
 // ── Handle POST sebelum output apapun ───────────────────
@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nuSt->execute([$newId]);
             loginUser($nuSt->fetch());
             flash('success', 'Selamat datang di YummySpot, ' . $v['fullname'] . '!');
-            if ($v['role'] === 'owner') redirect(route('owner'));
-            else redirect(route('home'));
+            if ($v['role'] === 'owner') redirect(APP_URL . '/owner/dashboard.php');
+            else redirect(APP_URL . '/index.php');
         }
     }
 }

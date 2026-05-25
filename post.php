@@ -10,11 +10,11 @@ $_self    = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HT
 if ($_referer && strpos($_referer, 'post.php') === false) {
     $backUrl = $_referer;
 } else {
-    $backUrl = route('home');
+    $backUrl = APP_URL . '/index.php';
 }
 
 $postId = (int)($_GET['id'] ?? 0);
-if (!$postId) redirect(route('home'));
+if (!$postId) redirect(APP_URL . '/index.php');
 
 $db = getDB();
 $st = $db->prepare("

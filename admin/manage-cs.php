@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db->prepare("INSERT INTO users (fullname, username, email, password, role, status) VALUES (?,?,?,?,'cs','active')")
                    ->execute([$fullname, $username, $email, $hash]);
                 flash('success', 'Akun CS berhasil ditambahkan!');
-                redirect(route('admin.cs'));
+                redirect(APP_URL . '/admin/manage-cs.php');
             }
         }
         $msg = implode(' ', $errs);
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET status = ? WHERE id = ? AND role = 'cs'")
                ->execute([$status, $id]);
             flash('success', $status === 'active' ? 'Akun CS diaktifkan.' : 'Akun CS disuspend.');
-            redirect(route('admin.cs'));
+            redirect(APP_URL . '/admin/manage-cs.php');
         }
     }
 
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET password = ? WHERE id = ? AND role = 'cs'")
                ->execute([$hash, $id]);
             flash('success', 'Password CS berhasil direset.');
-            redirect(route('admin.cs'));
+            redirect(APP_URL . '/admin/manage-cs.php');
         } else {
             $msg = 'Password minimal 6 karakter.';
         }
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db->prepare("UPDATE users SET role = 'user', status = 'suspended' WHERE id = ? AND role = 'cs'")
                ->execute([$id]);
             flash('success', 'Akun CS dihapus.');
-            redirect(route('admin.cs'));
+            redirect(APP_URL . '/admin/manage-cs.php');
         }
     }
 }

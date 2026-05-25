@@ -5,7 +5,7 @@ $user  = currentUser();
 $db    = getDB();
 $uname = trim($_GET['u'] ?? '');
 if (!$uname && isLoggedIn()) $uname = currentUser()['username'];
-elseif (!$uname) redirect(route('login'));
+elseif (!$uname) redirect(APP_URL . '/login.php');
 
 $st = $db->prepare("SELECT * FROM users WHERE username = ? AND status = 'active' LIMIT 1");
 $st->execute([$uname]);

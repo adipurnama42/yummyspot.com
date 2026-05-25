@@ -6,7 +6,7 @@ $user = currentUser();
 $pageTitle = 'Edit Katalog — YummySpot';
 $db = getDB();
 $id = (int)($_GET['id'] ?? 0);
-if (!$id) redirect(route('owner.catalogs'));
+if (!$id) redirect(APP_URL . '/owner/catalogs.php');
 
 // Pastikan katalog milik owner ini
 $st = $db->prepare("SELECT * FROM catalogs WHERE id = ? AND owner_id = ?");
@@ -14,7 +14,7 @@ $st->execute([$id, $user['id']]);
 $catalog = $st->fetch();
 if (!$catalog) {
     flash('error', 'Katalog tidak ditemukan.');
-    redirect(route('owner.catalogs'));
+    redirect(APP_URL . '/owner/catalogs.php');
 }
 
 $cats = $db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         flash('success', 'Katalog berhasil diperbarui!');
-        redirect(route('owner.catalogs'));
+        redirect(APP_URL . '/owner/catalogs.php');
     }
 }
 

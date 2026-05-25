@@ -12,7 +12,7 @@ $cslug   = trim($_POST['catalog_slug'] ?? '');
 $hasImage = !empty($_FILES['images']['name'][0]) && $_FILES['images']['error'][0] === UPLOAD_ERR_OK;
 if (!$hasImage) {
     flash('error', 'Foto wajib dipilih untuk membuat postingan!');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 
 // ── Upload gambar ────────────────────────────────────────
@@ -27,18 +27,18 @@ $f = [
 // Validasi ukuran dan tipe
 if ($f['size'] > 5 * 1024 * 1024) {
     flash('error', 'Ukuran file melebihi batas 5MB.');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 $allowed = ['image/jpeg', 'image/png', 'image/webp'];
 if (!in_array($f['type'], $allowed)) {
     flash('error', 'Format file tidak didukung. Gunakan JPG, PNG, atau WebP.');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 
 $imgUrl = uploadImage($f, 'posts');
 if (!$imgUrl) {
     flash('error', 'Gagal mengupload foto. Coba lagi.');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 
 // ── Cari catalog_id dari slug ────────────────────────────
@@ -53,7 +53,7 @@ if ($cslug !== '') {
 // Validasi katalog WAJIB untuk user biasa (bukan owner)
 if ($u['role'] !== 'owner' && $cid === null) {
     flash('error', 'Katalog tempat wajib dipilih!');
-    redirect(route('home'));
+    redirect(APP_URL . '/index.php');
 }
 
 // ── Simpan post ──────────────────────────────────────────

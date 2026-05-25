@@ -8,11 +8,11 @@ $_referer = $_SERVER['HTTP_REFERER'] ?? '';
 if ($_referer && strpos($_referer, 'catalog-detail.php') === false) {
     $backUrl = $_referer;
 } else {
-    $backUrl = route('catalog');
+    $backUrl = APP_URL . '/catalog.php';
 }
 
 $slug    = trim($_GET['slug'] ?? '');
-if (!$slug) redirect(route('catalog'));
+if (!$slug) redirect(APP_URL . '/catalog.php');
 $db      = getDB();
 $visitor = currentUser();
 
