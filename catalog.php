@@ -16,7 +16,7 @@ $sort = in_array($_GET['sort'] ?? '', ['popular', 'rating', 'newest'])
   ? $_GET['sort'] : 'popular';
 
 // ── Build WHERE ───────────────────────────────────────────
-$where  = ["c.verification_status = 'approved'", "c.deleted_at IS NULL"];
+$where  = ["c.verification_status = 'approved'"];
 $params = [];
 
 if ($q) {
@@ -26,7 +26,7 @@ if ($q) {
 }
 if ($cat) {
   $where[] = "c.category_id = ?";
-  $params[] = $cat;
+  $params[] = (int)$cat;
 }
 if ($city) {
   $where[] = "c.city LIKE ?";
@@ -35,7 +35,7 @@ if ($city) {
 
 $ws  = 'WHERE ' . implode(' AND ', $where);
 $ord = match ($sort) {
-  'rating' => 'c.avg_rating DESC',
+  'rating' => 'c.avg_rating DESC, c.total_reviews DESC',
   'newest' => 'c.created_at DESC',
   default  => 'c.total_likes DESC, c.avg_rating DESC',
 };
@@ -46,20 +46,20 @@ $tSt->execute($params);
 $total = (int)$tSt->fetchColumn();
 
 // ── Fetch catalogs ────────────────────────────────────────
-$cSt = $db->prepare("
-    SELECT c.*, cat.name AS cat_name, cat.icon AS cat_icon
-    FROM catalogs c
-    JOIN categories cat ON c.category_id = cat.id
-    $ws
-    ORDER BY $ord
-    LIMIT $lmt OFFSET $off
-");
+$sql = "SELECT c.*, cat.name AS cat_name, cat.icon AS cat_icon
+        FROM catalogs c
+        JOIN categories cat ON c.category_id = cat.id
+        $ws
+        ORDER BY $ord
+        LIMIT $lmt OFFSET $off";
+
+$cSt = $db->prepare($sql);
 $cSt->execute($params);
 $catalogs = $cSt->fetchAll();
 
-$pages    = (int)ceil($total / $lmt);
-$cats     = $db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
-$cities   = $db->query("SELECT DISTINCT city FROM catalogs WHERE verification_status='approved' AND deleted_at IS NULL ORDER BY city")->fetchAll(PDO::FETCH_COLUMN);
+$pages  = (int)ceil($total / $lmt);
+$cats   = $db->query("SELECT * FROM categories ORDER BY id")->fetchAll();
+$cities = $db->query("SELECT DISTINCT city FROM catalogs WHERE verification_status='approved' ORDER BY city")->fetchAll(PDO::FETCH_COLUMN);
 
 // ── Output HTML ───────────────────────────────────────────
 $pageTitle = 'Katalog Tempat — YummySpot';
@@ -72,7 +72,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- Filter bar -->
     <div class="card" style="margin-bottom:1rem;padding:.85rem 1.1rem;">
-      <form method="GET">
+      <form method="GET" id="filter-form">
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
           <div class="input-wrap" style="flex:1;min-width:180px;">
             <i class="fa-solid fa-magnifying-glass i-icon fa-xs"></i>
@@ -81,7 +81,7 @@ require_once __DIR__ . '/includes/header.php';
           <select name="cat" class="form-control" style="width:auto;" onchange="this.form.submit()">
             <option value="">Semua Kategori</option>
             <?php foreach ($cats as $c): ?>
-              <option value="<?= $c['id'] ?>" <?= $cat == $c['id'] ? 'selected' : '' ?>>
+              <option value="<?= (int)$c['id'] ?>" <?= $cat === (int)$c['id'] ? 'selected' : '' ?>>
                 <?= e($c['name']) ?>
               </option>
             <?php endforeach; ?>
@@ -103,20 +103,19 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <!-- Kategori pills -->
-        <?php if (!empty($cats)): ?>
-          <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.65rem;">
-            <a href="catalog.php?sort=<?= $sort ?>"
-              class="btn btn-sm <?= !$cat ? 'btn-primary' : 'btn-outline' ?>" style="font-size:.75rem;">
-              Semua
+        <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.65rem;">
+          <a href="catalog.php?sort=<?= $sort ?>"
+            class="btn btn-sm <?= !$cat ? 'btn-primary' : 'btn-outline' ?>" style="font-size:.75rem;">
+            Semua
+          </a>
+          <?php foreach ($cats as $c): ?>
+            <a href="catalog.php?cat=<?= (int)$c['id'] ?>&sort=<?= $sort ?>"
+              class="btn btn-sm <?= $cat === (int)$c['id'] ? 'btn-primary' : 'btn-outline' ?>"
+              style="font-size:.75rem;">
+              <i class="fa-solid <?= e($c['icon']) ?> fa-xs"></i> <?= e($c['name']) ?>
             </a>
-            <?php foreach ($cats as $c): ?>
-              <a href="catalog.php?cat=<?= $c['id'] ?>&sort=<?= $sort ?>"
-                class="btn btn-sm <?= $cat == $c['id'] ? 'btn-primary' : 'btn-outline' ?>" style="font-size:.75rem;">
-                <i class="fa-solid <?= e($c['icon']) ?> fa-xs"></i> <?= e($c['name']) ?>
-              </a>
-            <?php endforeach; ?>
-          </div>
-        <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
       </form>
     </div>
 
@@ -126,11 +125,10 @@ require_once __DIR__ . '/includes/header.php';
         <span style="font-weight:800;font-family:'Nunito',sans-serif;"><?= number_format($total) ?></span>
         <span class="text-dim"> tempat ditemukan</span>
         <?php if ($cat): ?>
-          <?php $activeCat = array_filter($cats, fn($c) => $c['id'] == $cat);
-          $activeCat = reset($activeCat); ?>
-          <?php if ($activeCat): ?>
+          <?php $ac = array_values(array_filter($cats, fn($c) => (int)$c['id'] === $cat))[0] ?? null; ?>
+          <?php if ($ac): ?>
             <span style="background:var(--accent-bg);color:var(--accent);padding:.15rem .55rem;border-radius:20px;font-size:.72rem;font-weight:700;margin-left:.35rem;">
-              <i class="fa-solid <?= e($activeCat['icon']) ?> fa-xs"></i> <?= e($activeCat['name']) ?>
+              <i class="fa-solid <?= e($ac['icon']) ?> fa-xs"></i> <?= e($ac['name']) ?>
             </span>
           <?php endif; ?>
         <?php endif; ?>
@@ -156,7 +154,7 @@ require_once __DIR__ . '/includes/header.php';
       <div class="empty">
         <div class="e-icon"><i class="fa-solid fa-map-pin"></i></div>
         <h3>Tidak ditemukan</h3>
-        <p>Coba ubah kata kunci atau filter kategori.</p>
+        <p>Coba ubah kata kunci atau pilih kategori lain.</p>
         <a href="catalog.php" class="btn btn-primary mt-2">Lihat Semua</a>
       </div>
     <?php else: ?>
@@ -178,14 +176,11 @@ require_once __DIR__ . '/includes/header.php';
                   <i class="fa-solid <?= e($c['cat_icon']) ?> fa-2x" style="color:var(--accent);opacity:.4;"></i>
                 </div>
               <?php endif; ?>
-              <?php if ($c['verification_status'] === 'approved'): ?>
-                <div class="verified-badge"><i class="fa-solid fa-check fa-xs"></i></div>
-              <?php endif; ?>
+              <div class="verified-badge"><i class="fa-solid fa-check fa-xs"></i></div>
               <?php if ($user): ?>
                 <button onclick="event.stopPropagation();toggleWishlist(<?= $c['id'] ?>,this)"
                   class="btn btn-icon btn-sm"
-                  style="position:absolute;top:.5rem;left:.5rem;background:rgba(255,255,255,.85);color:<?= $wl ? 'var(--accent)' : 'var(--text2)' ?>;"
-                  title="Wishlist">
+                  style="position:absolute;top:.5rem;left:.5rem;background:rgba(255,255,255,.85);color:<?= $wl ? 'var(--accent)' : 'var(--text2)' ?>;">
                   <i class="fa-<?= $wl ? 'solid' : 'regular' ?> fa-bookmark fa-xs"></i>
                 </button>
               <?php endif; ?>
