@@ -1,7 +1,7 @@
 <?php
 
 define('APP_NAME',    'YummySpot');
-define('APP_URL',     'https://yummy.caro-studio.com/');
+define('APP_URL',     'https://yummy.caro-studio.com');
 define('APP_VERSION', '1.0.0');
 define('UPLOAD_PATH', __DIR__ . '/../uploads/');
 define('UPLOAD_URL',  APP_URL . '/uploads/');
