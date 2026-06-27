@@ -11,7 +11,7 @@
 
 Platform berbasis web yang memadukan konsep social media dengan katalog tempat wisata dan kuliner. Pengguna dapat berbagi postingan, menemukan katalog tempat menarik, memberikan ulasan, dan saling berinteraksi — semua dalam satu platform.
 
-[Demo Live](https://yummyspot.caro-studio.com) · [Laporan Bug](https://yummyspot.caro-studio.com/contact.php) · [Dokumentasi](#instalasi)
+[Demo Live](https://yummy.caro-studio.com) · [Laporan Bug](https://yummy.caro-studio.com/contact.php) · [Dokumentasi](#instalasi)
 
 </div>
 
@@ -20,6 +20,7 @@ Platform berbasis web yang memadukan konsep social media dengan katalog tempat w
 ## ✨ Fitur Utama
 
 ### 👤 Pengguna (User)
+
 - Registrasi & login dengan peran berbeda (User, Pemilik, CS, Admin)
 - Feed postingan dengan like, komentar, dan follow
 - Upload foto postingan dengan mention katalog
@@ -29,6 +30,7 @@ Platform berbasis web yang memadukan konsep social media dengan katalog tempat w
 - Form hubungi CS dengan upload screenshot
 
 ### 🏪 Pemilik (Owner)
+
 - Dashboard analitik katalog
 - Kelola katalog: tambah, edit, hapus (soft delete 30 hari)
 - Trash bin — katalog dihapus permanen otomatis setelah 30 hari
@@ -36,11 +38,13 @@ Platform berbasis web yang memadukan konsep social media dengan katalog tempat w
 - Pantau ulasan dan rating katalog
 
 ### 🛡️ Customer Service (CS)
+
 - Review & verifikasi katalog (setujui/tolak)
 - Kelola laporan dari pengguna
 - Riwayat verifikasi per katalog
 
 ### ⚡ Admin (Super Admin)
+
 - Dashboard overview statistik platform
 - Kelola pengguna, role, dan status akun
 - Takedown/pulihkan postingan & katalog
@@ -51,15 +55,15 @@ Platform berbasis web yang memadukan konsep social media dengan katalog tempat w
 
 ## 🛠️ Teknologi
 
-| Komponen | Teknologi |
-|----------|-----------|
-| Backend | PHP 8.1+ Native (tanpa framework) |
-| Database | MySQL 8.0+ dengan PDO |
-| Keamanan | Prepared Statements, CSRF Token, bcrypt |
-| Frontend | HTML, CSS, JavaScript Vanilla |
-| Font | Nunito + Plus Jakarta Sans (Google Fonts) |
-| Icon | Font Awesome 6 Free |
-| Auth | Session-based + cookie 30 hari |
+| Komponen | Teknologi                                 |
+| -------- | ----------------------------------------- |
+| Backend  | PHP 8.1+ Native (tanpa framework)         |
+| Database | MySQL 8.0+ dengan PDO                     |
+| Keamanan | Prepared Statements, CSRF Token, bcrypt   |
+| Frontend | HTML, CSS, JavaScript Vanilla             |
+| Font     | Nunito + Plus Jakarta Sans (Google Fonts) |
+| Icon     | Font Awesome 6 Free                       |
+| Auth     | Session-based + cookie 30 hari            |
 
 ---
 
@@ -95,6 +99,9 @@ yummyspot/
 ├── cs/
 │   ├── dashboard.php        # CS panel (katalog + laporan)
 │   └── catalog-detail.php   # Review verifikasi katalog
+├── database/
+│   ├── dummy_yummyspot.sql  # Database Dummy yang sudah memiliki data tiap tabelnya
+│   └── install.sql          # Database kosongan
 ├── admin/
 │   ├── dashboard.php        # Admin panel (5 tab)
 │   └── manage-cs.php        # Kelola tim CS
@@ -117,7 +124,6 @@ yummyspot/
 ├── report.php               # Form laporan konten
 ├── my-reports.php           # Riwayat laporan user
 ├── contact.php              # Form hubungi CS
-├── install_server.sql       # SQL installer (server)
 └── create-folders.php       # Setup folder upload
 ```
 
@@ -126,6 +132,7 @@ yummyspot/
 ## 🚀 Instalasi
 
 ### Prasyarat
+
 - PHP 8.1 atau lebih baru
 - MySQL 8.0 atau lebih baru
 - Apache/Nginx dengan `mod_rewrite` aktif
@@ -151,9 +158,9 @@ define('DB_NAME', 'yummyspot');
 
 // Server/Hosting
 define('DB_HOST', 'localhost');
-define('DB_USER', 'u880128862_yummyspot');
+define('DB_USER', 'yummyspot');
 define('DB_PASS', 'your_password');
-define('DB_NAME', 'u880128862_yummyspot');
+define('DB_NAME', 'yummyspot');
 ```
 
 Edit `config/app.php` sesuai URL:
@@ -163,29 +170,33 @@ Edit `config/app.php` sesuai URL:
 define('APP_URL', 'http://localhost/yummyspot');
 
 // Server
-define('APP_URL', 'https://yummyspot.caro-studio.com');
+define('APP_URL', 'https://yummy.caro-studio.com');
 ```
 
 ### 3. Import Database
 
 **Lokal (XAMPP):**
+
 ```bash
-# Buka phpMyAdmin → Buat database 'yummyspot' → Import install_server.sql
+# Buka phpMyAdmin → Buat database 'yummyspot' → Import install.sql
 # atau via terminal:
-mysql -u root -p yummyspot < install_server.sql
+mysql -u root -p yummyspot < install.sql
 ```
 
 **Server/Hosting:**
+
 1. Buka phpMyAdmin hosting
 2. Pilih database
-3. Tab **SQL** → paste isi `install_server.sql` → **Go**
+3. Tab **SQL** → paste isi `install.sql` → **Go**
 
 ### 4. Buat Folder Upload
 
 Akses sekali di browser:
+
 ```
 http://localhost/yummyspot/create-folders.php
 ```
+
 Hapus file `create-folders.php` setelah selesai.
 
 ### 5. Akses Aplikasi
@@ -193,7 +204,6 @@ Hapus file `create-folders.php` setelah selesai.
 ```
 http://localhost/yummyspot
 ```
-
 
 ## 🔐 Keamanan
 
