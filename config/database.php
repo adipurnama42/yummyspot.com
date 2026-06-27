@@ -1,8 +1,8 @@
 <?php
 define('DB_HOST', 'localhost');
-define('DB_USER', 'u880128862_adminyummy');
-define('DB_PASS', '*B^&$RaS4');
-define('DB_NAME', 'u880128862_yummyspotdb');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'yummyspot');
 define('DB_PORT', '3306');
 
 function getDB()
